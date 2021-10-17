@@ -5,8 +5,6 @@ from selenium.webdriver.common.keys import Keys
 import unittest
 import time
 
-browser = webdriver.Firefox()
-
 class NewVistorTest(unittest.TestCase):
     ''' Тест нового посетителя'''
 
@@ -15,10 +13,9 @@ class NewVistorTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         self.browser.quit()
-        self.browser.close()
 
     def test_can_start_a_list_and_retrieve_it_later(self):
-        self.browser.get('http://localhost:8000')
+        self.browser.get('http://127.0.0.1:8000')
 
         #Саша видит, что заголовок и шапка страницы говорят о списках
         #неотложных дел
@@ -27,7 +24,7 @@ class NewVistorTest(unittest.TestCase):
         self.assertIn('To-Do', header_text)
 
         #Ему сразу предлагается ввести элемент списка дел
-        inputbox = self.browser.find_element_by_id('id_new_time')
+        inputbox = self.browser.find_element_by_id('id_new_item')
         self.assertEqual(inputbox.get_attribute('placeholder'),
                          'Enter a to-do item')
 
@@ -40,8 +37,9 @@ class NewVistorTest(unittest.TestCase):
         time.sleep(1)
 
         table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_element_by_tag_name('tr')
-        self.assertTrue(any(rows.text == '1: Починить дверь' for row in rows))
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertTrue(any(row.text == '1: Починить дверь' for row in rows),
+                        "Новый жлемент списка не появился в таблице")
 
         #Текстовое поле по-прежнему приглашает его добавить еще один элемент
         #Он вводит "Написать тесты"
