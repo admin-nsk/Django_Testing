@@ -29,7 +29,7 @@ class NewVistorTest(unittest.TestCase):
                          'Enter a to-do item')
 
         #Он набирает в текстовом поле "Починить замок"
-        inputbox.send_keys('Починить замок')
+        inputbox.send_keys('Починить дверь')
 
         #Когда он нажимает Enter страница обновляется, и теперь страница
         #содержит "1: Почнить замок" в качестве элемента списка
@@ -38,11 +38,22 @@ class NewVistorTest(unittest.TestCase):
 
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
-        self.assertTrue(any(row.text == '1: Починить дверь' for row in rows),
-                        "Новый жлемент списка не появился в таблице")
+        self.assertIn('1: Починить дверь', [row.text for row in rows])
 
         #Текстовое поле по-прежнему приглашает его добавить еще один элемент
         #Он вводит "Написать тесты"
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        self.assertEqual(inputbox.get_attribute('placeholder'),
+                         'Enter a to-do item')
+        inputbox.send_keys('Написать тесты')
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
+
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn('2: Написать тесты', [row.text for row in rows])
+
+
         self.fail('Закончить тест')
 
 
