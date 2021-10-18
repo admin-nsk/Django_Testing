@@ -1,6 +1,11 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from lists.models import Item
+
 
 def home_page(request):
     '''Домашняя страница'''
-    return render(request, 'home.html', {'new_item_text': request.POST.get('item_text', ''),})
+    item = Item()
+    item.text = request.POST.get('item_text', '')
+    item.save()
+    items = Item.objects.all()
+    return render(request, 'home.html', {'tasks': items})

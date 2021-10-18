@@ -3,3 +3,4 @@ gekodriver.log
 __pycache__ 
 *.pyc 
 geckodriver.log 
+migrations
