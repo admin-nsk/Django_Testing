@@ -1,11 +1,10 @@
-import os
-
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import unittest
 import time
 
-class NewVistorTest(unittest.TestCase):
+class NewVistorTest(LiveServerTestCase):
     ''' Тест нового посетителя'''
 
     def setUp(self) -> None:
@@ -21,7 +20,7 @@ class NewVistorTest(unittest.TestCase):
         self.assertIn(row_text, [row.text for row in rows])
 
     def test_can_start_a_list_and_retrieve_it_later(self):
-        self.browser.get('http://127.0.0.1:8000')
+        self.browser.get(self.live_server_url)
 
         #Саша видит, что заголовок и шапка страницы говорят о списках
         #неотложных дел
