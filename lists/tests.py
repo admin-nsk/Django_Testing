@@ -16,10 +16,22 @@ class HomePageTest(TestCase):
         response = self.client.post('/', data={'item_text': text})
 
         self.assertEqual(Item.objects.count(), 1)
-        new_item = Item.object.first()
-        self.assertEqual(new_item.text(), text)
-        self.assertIn(text, response.content.decode())
-        self.assertTemplateUsed(response, 'home.html')
+        new_item = Item.objects.first()
+        self.assertEqual(new_item.text, text)
+
+    def test_redirects_after_POST(self):
+        text = 'A new list item'
+        response = self.client.post('/', data={'item_text': text})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], '/')
+
+    def test_display_all_list_items(self):
+        '''тест: отображаются все элементы списка'''
+        Item.objects.create(text='itemey 1')
+        Item.objects.create(text='itemey 2')
+        response = self.client.post('/')
+        self.assertIn('itemey 1', response.content.decode())
+        self.assertIn('itemey 2', response.content.decode())
 
 
 class ItemModelTest(TestCase):
@@ -41,8 +53,13 @@ class ItemModelTest(TestCase):
         self.assertEqual(saved_items.count(), 2)
 
         first_saved_item = saved_items[0]
-        second_saved_item = saved_items[0]
-        self.assertEqual(first_saved_item.text(), first_text)
-        self.assertEqual(second_saved_item.text(), second_text)
+        second_saved_item = saved_items[1]
+        self.assertEqual(first_saved_item.text, first_text)
+        self.assertEqual(second_saved_item.text, second_text)
+
+    def test_only_saves_items_when_necessary(self):
+        '''тест: сохраняет элменты только когда нужно'''
+        self.client.get('/')
+        self.assertEqual(Item.objects.count(), 0)
 
 
