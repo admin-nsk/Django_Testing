@@ -10,21 +10,6 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'home.html')
 
-    def test_can_save_a_POST_request(self):
-        '''тест: можно сохранить post-запрос'''
-        text = 'A new list item'
-        response = self.client.post('/', data={'item_text': text})
-
-        self.assertEqual(Item.objects.count(), 1)
-        new_item = Item.objects.first()
-        self.assertEqual(new_item.text, text)
-
-    def test_redirects_after_POST(self):
-        text = 'A new list item'
-        response = self.client.post('/', data={'item_text': text})
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/lists/alone-list-in-the-world/')
-
 
 class ItemModelTest(TestCase):
     '''Тест модели элемента списка'''
@@ -49,11 +34,6 @@ class ItemModelTest(TestCase):
         self.assertEqual(first_saved_item.text, first_text)
         self.assertEqual(second_saved_item.text, second_text)
 
-    def test_only_saves_items_when_necessary(self):
-        '''тест: сохраняет элменты только когда нужно'''
-        self.client.get('/')
-        self.assertEqual(Item.objects.count(), 0)
-
 
 class ListViewTest(TestCase):
     '''тест представления списка'''
@@ -72,4 +52,22 @@ class ListViewTest(TestCase):
         response = self.client.get("/lists/alone-list-in-the-world")
         self.assertTemplateUsed(response, "list.html")
 
+
+class NewListTest(TestCase):
+    '''тест нового списка'''
+
+    def test_can_save_a_POST_request(self):
+        '''тест: можно сохранить post-запрос'''
+        text = 'A new list item'
+        self.client.post('/lists/new', data={'item_text': text})
+
+        self.assertEqual(Item.objects.count(), 1)
+        new_item = Item.objects.first()
+        self.assertEqual(new_item.text, text)
+
+    def test_redirects_after_POST(self):
+        '''перенаправление по запросу'''
+        text = 'A new list item'
+        response = self.client.post('/lists/new', data={'item_text': text})
+        self.assertRedirects(response, '/lists/alone-list-in-the-world/')
 

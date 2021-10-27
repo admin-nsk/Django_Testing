@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from lists.views import home_page, view_list
+from lists.views import home_page, view_list, new_list
 """superlist URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -20,5 +20,6 @@ from django.urls import path
 
 urlpatterns = [
     url(r'^$', home_page, name='home'),
+    url(r'^lists/new$', new_list, name='new_list'),
     url(r'^lists/alone-list-in-the-world/$', view_list, name='view_list')
 ]
