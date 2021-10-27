@@ -23,15 +23,7 @@ class HomePageTest(TestCase):
         text = 'A new list item'
         response = self.client.post('/', data={'item_text': text})
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/')
-
-    def test_display_all_list_items(self):
-        '''тест: отображаются все элементы списка'''
-        Item.objects.create(text='itemey 1')
-        Item.objects.create(text='itemey 2')
-        response = self.client.post('/')
-        self.assertIn('itemey 1', response.content.decode())
-        self.assertIn('itemey 2', response.content.decode())
+        self.assertEqual(response['location'], '/lists/alone-list-in-the-world/')
 
 
 class ItemModelTest(TestCase):
@@ -61,5 +53,23 @@ class ItemModelTest(TestCase):
         '''тест: сохраняет элменты только когда нужно'''
         self.client.get('/')
         self.assertEqual(Item.objects.count(), 0)
+
+
+class ListViewTest(TestCase):
+    '''тест представления списка'''
+
+    def test_displays_all_items(self):
+        '''тест отображает все элементы списка'''
+        Item.objects.create(text="itemey 1")
+        Item.objects.create(text="itemey 2")
+
+        response = self.client.get('/lists/alone-list-in-the-world/')
+        self.assertContains(response, 'itemey 1')
+        self.assertContains(response, 'itemey 2')
+
+    def test_uses_list_template(self):
+        '''тест: испльзует шаблон списка'''
+        response = self.client.get("/lists/alone-list-in-the-world")
+        self.assertTemplateUsed(response, "list.html")
 
 
