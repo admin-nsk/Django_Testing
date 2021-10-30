@@ -21,14 +21,14 @@ class NewVistorTest(LiveServerTestCase):
         start_time = time.time()
         while True:
             try:
-                table = self.browser.find_element_by_id('id_list_table')
-                rows = table.find_elements_by_tag_name('tr')
+                table = self.browser.find_element_by_id("id_list_table")
+                rows = table.find_elements_by_tag_name("tr")
                 self.assertIn(row_text, [row.text for row in rows])
                 return
             except (AssertionError, WebDriverException) as ex:
                 if time.time() - start_time > MAX_WAIT:
                     raise ex
-                time.sleep(0.5)
+                time.sleep(1)
 
     def test_can_start_a_list_and_retrieve_it_later(self):
         self.browser.get(self.live_server_url)
@@ -63,8 +63,6 @@ class NewVistorTest(LiveServerTestCase):
 
         self.wait_for_row_in_list_table('1: Починить дверь')
         self.wait_for_row_in_list_table('2: Написать тесты')
-
-        self.fail('Закончить тест')
 
     def test_can_start_a_list_for_one_user(self):
         '''тест: можно начать список для одного пользователя'''
@@ -106,7 +104,7 @@ class NewVistorTest(LiveServerTestCase):
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Купить молоко')
         inputbox.send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table('2: Купить молоко')
+        self.wait_for_row_in_list_table('1: Купить молоко')
 
         # Фрэнсис получает уникальный URL-адрес
         francis_list_url = self.browser.current_url
@@ -119,6 +117,31 @@ class NewVistorTest(LiveServerTestCase):
         self.assertIn('Купить молоко', page_text)
         # Удовлетворенные, они оба ложатся спать
 
+    def test_layout_and_styling(self):
+        '''тест макета и стилевого оформления'''
+        #Саша открывает домашнюю страницу
+        self.browser.get(self.live_server_url)
+        self.browser.set_window_size(1023, 768)
+
+        #Он замечает, что поле ввода аккуратно центиовано
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        self.assertAlmostEqual(
+            inputbox.location['x'] + inputbox.size['width'] / 2,
+            512,
+            delta=10
+        )
+
+        # Она начинает новый список и видит, что поле ввода там тоже
+        # аккуратно центировано
+        inputbox.send_keys('testing')
+        inputbox.send_keys(Keys.ENTER)
+        self.wait_for_row_in_list_table('1: testing')
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        self.assertAlmostEqual(
+            inputbox.location['x'] + inputbox.size['width'] / 2,
+            512,
+            delta=10
+        )
 
 if __name__ == '__main__':
     unittest.main(warnings='ignore')
