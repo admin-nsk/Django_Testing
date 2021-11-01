@@ -1,4 +1,4 @@
-from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import WebDriverException
@@ -7,7 +7,7 @@ import time
 
 MAX_WAIT = 10
 
-class NewVistorTest(LiveServerTestCase):
+class NewVistorTest(StaticLiveServerTestCase):
     ''' Тест нового посетителя'''
 
     def setUp(self) -> None:
@@ -64,15 +64,15 @@ class NewVistorTest(LiveServerTestCase):
         self.wait_for_row_in_list_table('1: Починить дверь')
         self.wait_for_row_in_list_table('2: Написать тесты')
 
-    def test_can_start_a_list_for_one_user(self):
-        '''тест: можно начать список для одного пользователя'''
-        #Саша слышал про новое крутое онлайн приложение со списком
-
-        #Страница снова обновляется  и теперь показывает оба элемента его списка
-        self.wait_for_row_in_list_table('2: Написать тесты')
-
-        self.wait_for_row_in_list_table('1: Починить дверь')
-        # Удовлетворенная, она снова ложится спать.
+    # def test_can_start_a_list_for_one_user(self):
+    #     '''тест: можно начать список для одного пользователя'''
+    #     #Саша слышал про новое крутое онлайн приложение со списком
+    #
+    #     #Страница снова обновляется  и теперь показывает оба элемента его списка
+    #     self.wait_for_row_in_list_table('2: Написать тесты')
+    #
+    #     self.wait_for_row_in_list_table('1: Починить дверь')
+    #     # Удовлетворенная, она снова ложится спать.
 
     def test_multiple_users_can_start_list_at_different_urls(self):
         '''тест: многочисленные пользователи могут начать списки по разным url'''
