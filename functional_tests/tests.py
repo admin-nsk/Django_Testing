@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -12,6 +14,9 @@ class NewVistorTest(StaticLiveServerTestCase):
 
     def setUp(self) -> None:
         self.browser = webdriver.Firefox()
+        staging_server = os.environ.get('STAGING_SERVER')
+        if staging_server:
+            self.live_server_url = 'http://' + staging_server
 
     def tearDown(self) -> None:
         self.browser.quit()
@@ -63,16 +68,6 @@ class NewVistorTest(StaticLiveServerTestCase):
 
         self.wait_for_row_in_list_table('1: Починить дверь')
         self.wait_for_row_in_list_table('2: Написать тесты')
-
-    # def test_can_start_a_list_for_one_user(self):
-    #     '''тест: можно начать список для одного пользователя'''
-    #     #Саша слышал про новое крутое онлайн приложение со списком
-    #
-    #     #Страница снова обновляется  и теперь показывает оба элемента его списка
-    #     self.wait_for_row_in_list_table('2: Написать тесты')
-    #
-    #     self.wait_for_row_in_list_table('1: Починить дверь')
-    #     # Удовлетворенная, она снова ложится спать.
 
     def test_multiple_users_can_start_list_at_different_urls(self):
         '''тест: многочисленные пользователи могут начать списки по разным url'''
