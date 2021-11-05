@@ -19,6 +19,9 @@
                                class="form-control input-lg"
                             placeholder="Enter a to-do item" />
                         {% csrf_token %}
+                        {% if error %}
+                            <span class="help-block">{{ error }}</span>
+                        {% endif %}
                     </form>
                 </div>
             </div>

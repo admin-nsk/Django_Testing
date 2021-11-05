@@ -6,6 +6,7 @@ class List(models.Model):
     '''Список'''
     pass
 
+
 class Item(models.Model):
     '''элемент списка'''
     text = models.TextField(default='')
