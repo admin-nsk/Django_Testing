@@ -56,6 +56,32 @@ class ListViewTest(TestCase):
             item.save()
             item.full_clean()
 
+    def test_can_save_a_POST_an_exiting_list(self):
+        """тест: можно сохранить post-запрос в существующий списоок"""
+        other_list = List.objects.create()
+        correct_list = List.objects.create()
+
+        self.client.post(
+            f'/lists/{correct_list.id}/',
+            data={'item_text': 'A new item an exiting list'}
+        )
+
+        self.assertEqual(Item.objects.count(), 1)
+        new_item = Item.objects.first()
+        self.assertEqual(new_item.text, 'A new item an exiting list')
+        self.assertEqual(new_item.list, correct_list)
+
+    def test_POST_redirect_to_list_view(self):
+        """тест: переадресуется в представленние списка"""
+        other_list = List.objects.create()
+        correct_list = List.objects.create()
+        response = self.client.post(
+            f'/lists/{correct_list.id}/',
+            data={'item_text': 'A new item an exiting list'}
+        )
+        self.assertRedirects(response, f'/lists/{correct_list.id}/')
+
+
 
 class NewListTest(TestCase):
     """тест нового списка"""
@@ -91,33 +117,4 @@ class NewListTest(TestCase):
         self.client.post('/lists/new', data={'item_text': ''})
         self.assertEqual(List.objects.count(), 0)
         self.assertEqual(Item.objects.count(), 0)
-
-
-class NewItemTest(TestCase):
-    """тест нового элемента списка"""
-
-    def test_can_save_a_POST_an_exiting_list(self):
-        """тест: можно сохранить post-запрос в существующий списоок"""
-        other_list = List.objects.create()
-        correct_list = List.objects.create()
-
-        self.client.post(
-            f'/lists/{correct_list.id}/add_item',
-            data={'item_text': 'A new item an exiting list'}
-        )
-
-        self.assertEqual(Item.objects.count(), 1)
-        new_item = Item.objects.first()
-        self.assertEqual(new_item.text, 'A new item an exiting list')
-        self.assertEqual(new_item.list, correct_list)
-
-    def test_redirect_to_list_view(self):
-        """тест: переадресуется в представленние списка"""
-        other_list = List.objects.create()
-        correct_list = List.objects.create()
-        response = self.client.post(
-            f'/lists/{correct_list.id}/add_item',
-            data={'item_text': 'A new item an exiting list'}
-        )
-        self.assertRedirects(response, f'/lists/{correct_list.id}/')
 
