@@ -34,3 +34,8 @@ class ListAndItemModelTest(TestCase):
         self.assertEqual(second_saved_item.text, second_text)
         self.assertEqual(second_saved_item.list, list_)
 
+
+def test_get_absolute_url(self):
+    """тест: получен абсолютный url"""
+    list_ = List.objects.create()
+    self.assertEqual(list_.get_absolute_url(), f'/lists/{list_.id}/')
